@@ -20,10 +20,13 @@ class Day1 {
         list2.Sort();
 
         long sumA=0;
+        long sumB=0;
         for (int i = 0; i < list1.Count; i++){
             sumA+=Math.Abs(list2[i] - list1[i]);
+            sumB+=(list1[i] * list2.Count(a=>a == list1[i]));
         }
 
         Console.WriteLine($"result: {sumA}");
+        Console.WriteLine($"result B: {sumB}");
     }
 }
