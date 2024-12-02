@@ -3,9 +3,8 @@
 
 class Day1 {
     internal static void doit(){
-        Console.WriteLine("Hello, World!");
-
-        var lines = Helper.getInputAsLines(1);
+        Regex dayNoR = new(@"\d*$");
+        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name).Value));
 
         List<long> list1 = new();
         List<long> list2 = new();
