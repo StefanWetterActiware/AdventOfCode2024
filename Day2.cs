@@ -26,7 +26,12 @@ class Day2 {
                 var test = intParts.ToList();
                 test.RemoveAt(j+1);
                 removedIndex=j+1;
-                return doLine(test,(allowedErrors-1), out int dummy2);
+                if (doLine(test,(allowedErrors-1), out int dummy2)) return true;
+
+                var test3 = intParts.ToList();
+                test3.RemoveAt(j);
+                removedIndex=j;
+                return doLine(test3,(allowedErrors-1), out int dummy3);
             }
         }
         return true;
@@ -34,7 +39,7 @@ class Day2 {
 
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
-        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name).Value), true);
+        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name).Value), false);
 
         long sumA=0;
         long sumB=0;
@@ -52,11 +57,11 @@ class Day2 {
                 sumB++;
                 if (removedIndex > -1) {
                     Console.ForegroundColor=ConsoleColor.Green;
-                    Console.Write(string.Join(' ', intParts.Take(removedIndex+1).ToArray()));
+                    Console.Write(string.Join(' ', intParts.Take(removedIndex).ToArray()));
                     Console.ForegroundColor=ConsoleColor.Red;
-                    Console.Write($" {intParts[removedIndex]} ");
+                    Console.Write($"{(removedIndex>0?" ":"")}{intParts[removedIndex]} ");
                     Console.ForegroundColor=ConsoleColor.Green;
-                    Console.WriteLine(string.Join(' ', intParts.Skip(removedIndex+2).ToArray()));
+                    Console.WriteLine(string.Join(' ', intParts.Skip(removedIndex+1).ToArray()));
                 } else {
                     Console.ForegroundColor=ConsoleColor.Green;
                     Console.WriteLine(string.Join(' ', intParts.ToArray()));
