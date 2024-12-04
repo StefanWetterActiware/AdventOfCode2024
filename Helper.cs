@@ -34,6 +34,17 @@ static class Helper
     }
 
     [DebuggerHidden]
+    public static char[][] getInputAsCharArray(int tag, bool test = false){
+        var lines = getInputAsLines(tag, test);
+        char[][] res = new char[lines.First().Length][];
+        for (int i = 0; i < lines.Count(); i++)
+        {
+            res[i] = lines.Skip(i).First().ToCharArray();
+        }
+        return res;
+    }
+
+    [DebuggerHidden]
     public static string getInput(int tag, bool test = false){
         loadInput(tag);
         return System.IO.File.ReadAllText(getCacheFileName(tag, test)).TrimEnd("@\r\n".ToCharArray());
