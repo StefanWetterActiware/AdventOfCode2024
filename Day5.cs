@@ -37,7 +37,7 @@ class Day5 {
                 if (rules.ContainsKey(bef)) {
                     rules[bef].Add(af);
                 } else {
-                    rules.Add(bef, new List<int>(af));
+                    rules.Add(bef, new List<int>{af});
                 }
                 continue;
             }
