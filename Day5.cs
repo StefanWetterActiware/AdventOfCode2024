@@ -2,7 +2,18 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 
-
+class MyC:IComparer<int> {
+    public SortedDictionary<int,List<int>> rules;
+    public int Compare(int x,int y) {
+        if (rules.ContainsKey(y)) {
+            if (rules[y].Contains(x)) {
+                return 1;
+            }
+        }
+        
+        return 0;
+    }
+}
 
 class Day5 {
 
@@ -54,6 +65,18 @@ class Day5 {
             }
         }
         
+
+        MyC comparer = new();
+        comparer.rules = rules;
+
+        foreach (var nums in incorr)
+        {
+            for (int i = 0; i < nums.Count(); i++)
+            {
+                nums.Sort(comparer);
+            }
+            sumB += nums[nums.Count/2];
+        }
 
         Console.ForegroundColor=ConsoleColor.Blue;
         Console.WriteLine($"result: {sumA}");
