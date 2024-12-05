@@ -19,7 +19,7 @@ class Day5 {
 
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
-        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name).Value), true);
+        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value), true);
         
         long sumA=0;
         long sumB=0;
@@ -71,10 +71,8 @@ class Day5 {
 
         foreach (var nums in incorr)
         {
-            for (int i = 0; i < nums.Count(); i++)
-            {
-                nums.Sort(comparer);
-            }
+            nums.Sort(comparer);
+            Console.WriteLine(string.Join(',',nums));
             sumB += nums[nums.Count/2];
         }
 
