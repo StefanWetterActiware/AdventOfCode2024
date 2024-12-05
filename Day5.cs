@@ -1,25 +1,10 @@
 using System.Text.RegularExpressions;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-
-class MyC:IComparer<int> {
-    public SortedDictionary<int,List<int>> rules;
-    public int Compare(int x,int y) {
-        if (rules.ContainsKey(y)) {
-            if (rules[y].Contains(x)) {
-                return 1;
-            }
-        }
-        
-        return 0;
-    }
-}
 
 class Day5 {
 
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
-        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value), true);
+        var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value), false);
         
         long sumA=0;
         long sumB=0;
@@ -66,12 +51,18 @@ class Day5 {
         }
         
 
-        MyC comparer = new();
-        comparer.rules = rules;
-
         foreach (var nums in incorr)
         {
-            nums.Sort(comparer);
+            for (int k = 0;k < nums.Count; k++) {
+                if (rules.ContainsKey(nums[k])) {
+                    if (rules[nums[k]].Any(a => nums.Take(k).Contains(a))){
+                        var first = nums.Take(k).First(a => rules[nums[k]].Contains(a));
+                        var curNum = nums[k];
+                        nums.RemoveAt(k);
+                        nums.Insert(nums.IndexOf(first), curNum);
+                    }
+                }
+            }
             Console.WriteLine(string.Join(',',nums));
             sumB += nums[nums.Count/2];
         }
