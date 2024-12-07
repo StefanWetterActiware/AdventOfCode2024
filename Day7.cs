@@ -7,9 +7,9 @@ class Day7 {
                 var next = numbers.First();
                 var others = numbers.Skip(1);
 
+                if (withAppend && checkline(goodRes, long.Parse($"{start}{next}"), others, withAppend)) return true;
                 if (checkline(goodRes, start+next, others, withAppend)) return true;
                 if (checkline(goodRes, start*next, others, withAppend)) return true;
-                if (withAppend && checkline(goodRes, long.Parse($"{start}{next}"), others, withAppend)) return true;
                 return false;
             } else {
                 return goodRes==start;
