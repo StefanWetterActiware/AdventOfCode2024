@@ -1,6 +1,21 @@
 using System.Text.RegularExpressions;
 
 class Day7 {
+
+        static bool checkline(long goodRes, long start, IEnumerable<int> numbers, bool withAppend = false) {
+            if (numbers.Any()) {
+                var next = numbers.First();
+                var others = numbers.Skip(1);
+
+                if (checkline(goodRes, start+next, others, withAppend)) return true;
+                if (checkline(goodRes, start*next, others, withAppend)) return true;
+                if (withAppend && checkline(goodRes, long.Parse($"{start}{next}"), others, withAppend)) return true;
+                return false;
+            } else {
+                return goodRes==start;
+            }
+        }
+
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
         var lines = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value));
@@ -11,25 +26,14 @@ class Day7 {
         foreach (var line in lines.Where(a=> !string.IsNullOrWhiteSpace(a))) {
             long res = long.Parse(line.Split(':')[0]);
             int[] numbers = line.Split(':')[1].Split(" ", StringSplitOptions.RemoveEmptyEntries).Select( a => int.Parse(a.Trim())).ToArray();
-            int operatorCount = numbers.Length-1;
-            for (int i = 0; i < Math.Pow(2, operatorCount); i++) {
 
-                long testRes = numbers[0];
-                for (int j = 0; j < operatorCount; j++) {
-                    if ((i & (int)Math.Pow(2, j)) == 0) {
-                        testRes += numbers[j+1];
-                    } else {
-                        testRes *= numbers[j+1];
-                    }
-                }
-
-                if (testRes == res) {
-                    sumA += res;
-                    break;
-                }
+            if (checkline(res, 0 , numbers)) {
+                sumA += res;
+                sumB += res;
+            } else if (checkline(res, 0 , numbers, true)) {
+                sumB += res;
             }
         }
-
 
         Console.ForegroundColor=ConsoleColor.Blue;
         Console.WriteLine($"result: {sumA}");
