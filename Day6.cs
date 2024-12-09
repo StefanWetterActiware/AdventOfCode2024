@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Text.RegularExpressions;
 
 class Day6 {
@@ -15,10 +16,9 @@ class Day6 {
     }
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
-        var lines = Helper.getInputAsCharArray(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value), true);
+        var lines = Helper.getInputAsCharArray(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value), false);
         
         long sumA=0;
-        long sumB=0;
 
         Waiter waiter=null;
         for (int y = 0; y < lines.Length; y++)
@@ -40,32 +40,35 @@ class Day6 {
         var printGrid = (char[][] grid, int offsetY = 0) => {
             int start = Math.Max(0, offsetY-40);
             if (start > (129-55)) start=129-55;
-            for (int i = start; i < start+55; i++) {
+            for (int i = start; i < Math.Min(start+55, grid.Length); i++) {
                 Console.WriteLine(grid[i]);
             }
         };
 
-        var checkInfiniteLoop = (Waiter rekCheckWaiter, char[][] rekCheckGrid) => {
+        var checkInfiniteLoop = (Waiter rekCheckWaiter, char[][] rekCheckGrid, bool withPaint=false) => {
             while (isOnGrid(rekCheckWaiter!.x, rekCheckWaiter.y)) {
                 int mx = rekCheckWaiter.direction == '>' ? 1 : (rekCheckWaiter.direction == '<' ? -1 : 0);
                 int my = rekCheckWaiter.direction == '^' ? -1 : (rekCheckWaiter.direction == 'v' ? 1 : 0);
 
                 if (isOnGrid(rekCheckWaiter.y + my,rekCheckWaiter.x+mx)) {
-                    if (rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] >= 'Z') {
-                        Console.Clear();
-                        printGrid(rekCheckGrid, rekCheckWaiter.y);
-                        Thread.Sleep(2);
+                    if (rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] >= ('X'+3)) {
+                        //Console.Clear();
+                        //printGrid(rekCheckGrid, rekCheckWaiter.y);
+                        //Console.ReadLine();
                         return true;
-                    } else if (rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] == '#') {
+                    } else if (rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] == '#' || rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] == 'O') {
                         rekCheckWaiter.turnRight();
                     } else {
                         if (rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] == '.')
                             rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] = 'X';
-                        else if (rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] == 'X' || rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] == 'Y')
+                        else if (rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x] >= 'X')
                             rekCheckGrid[rekCheckWaiter.y][rekCheckWaiter.x]++;
-                        // Console.Clear();
-                        // printGrid(rekCheckGrid, rekCheckWaiter.y);
-                        // Thread.Sleep(2);
+                        
+                        if (withPaint) {
+                            Console.Clear();
+                            printGrid(rekCheckGrid, rekCheckWaiter.y);
+                            Thread.Sleep(10);
+                        }
                         rekCheckWaiter.x += mx;
                         rekCheckWaiter.y += my;
                     }
@@ -76,6 +79,8 @@ class Day6 {
         };
 
         List<string> b=new();
+
+        List<Point> allInfiniteBlockers = new();
 
         while (isOnGrid(waiter!.x, waiter.y)) {
             int mx = waiter.direction == '>' ? 1 : (waiter.direction == '<' ? -1 : 0);
@@ -92,13 +97,15 @@ class Day6 {
                         rekCheckGrid[i] = (char[])lines[i].Clone();
                     }
                     rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
+                    Point possibleBlockLocation = new(rekCheckWaiter.x+mx,rekCheckWaiter.y + my);
 
                     rekCheckWaiter.turnRight();
                     if (checkInfiniteLoop(rekCheckWaiter, rekCheckGrid)) {
                         b.Add($"y:{rekCheckWaiter.y},x:{rekCheckWaiter.x}");
                         // rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
                         // printGrid(rekCheckGrid);
-                        sumB++;
+                        if (!allInfiniteBlockers.Contains(possibleBlockLocation))
+                            allInfiniteBlockers.Add(possibleBlockLocation);
                     }
 
                     lines[waiter.y][waiter.x] = 'X';
@@ -124,6 +131,6 @@ class Day6 {
         // foreach (var item in b) {
         //     Console.WriteLine(item.ToString());
         // }
-        Console.WriteLine($"result B: {sumB}");
+        Console.WriteLine($"result B: {allInfiniteBlockers.Count}");
     }
 }
