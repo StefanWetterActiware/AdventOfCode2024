@@ -21,6 +21,7 @@ class Day9 {
                     list.Add(-1);
                 }
         }
+        List<int> list2=list.ToArray().ToList();
 
         while (list.Contains(-1)) {
             var ind=list.IndexOf(-1);
@@ -36,10 +37,38 @@ class Day9 {
         for (int i = 0; i < list.Count; i++) {
             sumA += list[i]*i;
         }
+        Console.ForegroundColor=ConsoleColor.Blue;
+        Console.WriteLine($"result: {sumA}");
+
+        var highestID = list2.Last(x=>x!=-1);
+        for (int i = highestID; i >0; i--) {
+            int count = list2.Count(x=>x==i);
+            int searchIdx=0;
+            var found=false;
+            while (list2.IndexOf(-1,searchIdx+1) >-1) {
+                searchIdx = list2.IndexOf(-1,searchIdx+1);
+                if (list2.Skip(searchIdx).Take(count).Count(x=>x == -1) == count) {
+                    found=true;
+                    break;
+                }
+            }
+            if (found) {
+                int startIdxOfI = list2.IndexOf(i);
+                if (startIdxOfI > -1 && searchIdx < startIdxOfI) {
+                    for (int j = 0; j < count; j++) {
+                        list2[searchIdx+j] = i;
+                        list2[startIdxOfI+j] = -1;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < list2.Count; i++) {
+            if (list2[i] > 0)
+                sumB += list2[i]*i;
+        }
 
 
         Console.ForegroundColor=ConsoleColor.Blue;
-        Console.WriteLine($"result: {sumA}");
         Console.WriteLine($"result B: {sumB}");
     }
 }
