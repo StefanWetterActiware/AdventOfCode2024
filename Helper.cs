@@ -62,4 +62,10 @@ static class Helper
     public static List<string> getLines(string input) {
         return input.Trim('\n').Split("\n").Select(a=>a.TrimEnd('\r')).ToList();
     }
+
+    [DebuggerHidden]
+    public static bool isOnGrid(char[][] lines, int x, int y){
+        return (x >= 0 && y >= 0 && y < lines.Length && x < lines.First().Length);
+    }
+
 }
