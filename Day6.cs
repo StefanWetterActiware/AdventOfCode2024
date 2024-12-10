@@ -38,9 +38,10 @@ class Day6 {
         };
 
         var printGrid = (char[][] grid, int offsetY = 0) => {
-            int start = Math.Max(0, offsetY-40);
-            if (start > (129-55)) start=129-55;
-            for (int i = start; i < Math.Min(start+55, grid.Length); i++) {
+            const int terminalHeight = 53;
+            int start = Math.Max(0, offsetY-(terminalHeight-15));
+            if (start > (129-terminalHeight)) start=129-terminalHeight;
+            for (int i = start; i < Math.Min(start+terminalHeight, grid.Length); i++) {
                 Console.WriteLine(grid[i]);
             }
         };
