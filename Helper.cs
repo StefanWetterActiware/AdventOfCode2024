@@ -22,7 +22,11 @@ static class Helper
         string url = string.Format(urltempl, tag);
 
         HttpClient httpClient = new();
-        httpClient.DefaultRequestHeaders.Add("Cookie", "session=" + File.ReadAllText("sessionCookie"));
+        var sessionCookieFileName = "sessionCookie";
+        if (!System.IO.File.Exists(sessionCookieFileName)) {
+            sessionCookieFileName = "../../../sessionCookie";
+        }
+        httpClient.DefaultRequestHeaders.Add("Cookie", "session=" + File.ReadAllText(sessionCookieFileName));
 
         System.IO.File.WriteAllText(getCacheFileName(tag), httpClient.GetStringAsync(url).GetAwaiter().GetResult());
     }
