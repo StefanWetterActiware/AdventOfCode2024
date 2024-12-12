@@ -92,21 +92,23 @@ class Day6 {
                     waiter.turnRight();
                 } else {
                     //Part2
-                    var rekCheckWaiter = waiter.clone();
-                    char[][] rekCheckGrid = new char[lines.Length][];
-                    for (int i = 0; i < lines.Length; i++) {
-                        rekCheckGrid[i] = (char[])lines[i].Clone();
-                    }
-                    rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
-                    Point possibleBlockLocation = new(rekCheckWaiter.x+mx,rekCheckWaiter.y + my);
+                    if (lines[waiter.y + my][waiter.x+mx] != 'X') {
+                        var rekCheckWaiter = waiter.clone();
+                        char[][] rekCheckGrid = new char[lines.Length][];
+                        for (int i = 0; i < lines.Length; i++) {
+                            rekCheckGrid[i] = (char[])lines[i].Clone();
+                        }
+                        rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
+                        Point possibleBlockLocation = new(rekCheckWaiter.x+mx,rekCheckWaiter.y + my);
 
-                    rekCheckWaiter.turnRight();
-                    if (checkInfiniteLoop(rekCheckWaiter, rekCheckGrid)) {
-                        b.Add($"y:{rekCheckWaiter.y},x:{rekCheckWaiter.x}");
-                        // rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
-                        // printGrid(rekCheckGrid);
-                        if (!allInfiniteBlockers.Contains(possibleBlockLocation))
-                            allInfiniteBlockers.Add(possibleBlockLocation);
+                        rekCheckWaiter.turnRight();
+                        if (checkInfiniteLoop(rekCheckWaiter, rekCheckGrid)) {
+                            b.Add($"y:{rekCheckWaiter.y},x:{rekCheckWaiter.x}");
+                            // rekCheckGrid[rekCheckWaiter.y + my][rekCheckWaiter.x+mx] = 'O';
+                            // printGrid(rekCheckGrid);
+                            if (!allInfiniteBlockers.Contains(possibleBlockLocation))
+                                allInfiniteBlockers.Add(possibleBlockLocation);
+                        }
                     }
 
                     lines[waiter.y][waiter.x] = 'X';
