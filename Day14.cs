@@ -16,6 +16,12 @@ class Day14 {
             if (X > 100) X -= 101;
             if (Y > 102) Y -= 103;
         }
+
+        internal int DistFromMiddle {
+            get {
+                return Math.Abs(50 - X) + Math.Abs(51 - Y);
+            }
+        }
     }
     
     internal static void doit(){
@@ -60,6 +66,62 @@ class Day14 {
 
         Console.ForegroundColor=ConsoleColor.Blue;
         Console.WriteLine($"result: {quadrants[0]*quadrants[1]*quadrants[2]*quadrants[3]}");
+
+        var draw = (long num = -1) => {
+            Console.Clear();
+            foreach (var bot in robots.Where(bot=>bot.Y>20)) {
+                if (bot.X < Console.BufferWidth && bot.Y-20 < Console.BufferHeight) {
+                    Console.SetCursorPosition(bot.X, bot.Y-20);
+                    Console.Write('#');
+                }
+            }
+            Console.SetCursorPosition(0,Console.BufferHeight - 1);
+            Console.Write("Enter für weiter");
+            if (num > -1) Console.Write($" Runde: {num}");
+            Console.ReadLine();
+        };
+
+        var isTree = () => {
+            var q = robots.Where(bot => bot.X == 50).Select(bot=>bot.Y).Distinct().ToList();
+            if (!q.Any()) return false;
+            
+            q.Sort();
+            var r = q.Where(y => y > 51).ToList();
+            q = q.Where(y => y <= 51).ToList();
+            if (!q.Any()) return false;
+            if (!r.Any()) return false;
+            if (q.Count() < 15) return false;
+            if (r.Count() < 15) return false;
+
+            q.Reverse();
+            if (r.Skip(15).Take(1).Single() == 66 && q.Skip(15).Take(1).Single() == 37) {
+                draw();
+                return true;
+            }
+
+            //Default
+            return false;
+        };
+
+        int minSumOfAll = 100000;
+        sumB = 100;
+        while (true) {
+            int sumAllDist = robots.Select(bot => bot.DistFromMiddle).Sum();
+            Console.WriteLine($"No: {sumB}, SumOfAllDienstances: {sumAllDist}");
+
+            if (sumAllDist < minSumOfAll) {
+                minSumOfAll = sumAllDist;
+                draw(sumB);
+            } else if (sumAllDist < 10000) {
+                draw(sumB);
+            }
+            
+            if (isTree()) break;
+            
+            robots.ForEach(robot => robot.move());
+            sumB++;
+        }
+        //Result found by manually watching those found-before-low-distance-record-pictures... :)
         Console.WriteLine($"result B: {sumB}");
     }
 }
