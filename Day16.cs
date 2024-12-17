@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic;
 
@@ -15,9 +16,6 @@ class Day16 {
     internal static void doit() {
         Regex dayNoR = new(@"\d*$");
         var input = Helper.getInputAsCharArray(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value));
-
-        long sumA=0;
-        long sumB=0;
 
         var toRight = (char dir) => {
             switch (dir)
@@ -36,6 +34,8 @@ class Day16 {
 
         int endX=0;
         int endY = 0;
+
+        List<D16Point> allEndPointsPathes = new List<D16Point>();
 
         SortedDictionary<int, SortedDictionary<int,SortedDictionary<char, D16Point>>> calculated = new();
 
@@ -62,6 +62,10 @@ class Day16 {
             if (input[d16.Y][d16.X] == 'E') {
                 endX = d16.X;
                 endY= d16.Y;
+
+                allEndPointsPathes.Add(d16);
+                var curMin = allEndPointsPathes.Select(x => x.currentScore).Min();
+                allEndPointsPathes=allEndPointsPathes.Where(x => x.currentScore == curMin).ToList();
                 continue;
             }
 
@@ -76,6 +80,17 @@ class Day16 {
         var allEs = calculated[endY][endX];
 
         Console.WriteLine($"result A: {String.Join(",", allEs.Select(x => x.Value.currentScore).Min())}");
-        Console.WriteLine($"result B: {sumB}");
+
+        var listOfAllPointsOnAllBestWays = new List<Point>();
+        foreach ( var point in allEndPointsPathes) {
+            var next = point;
+            while (next != null) {
+                Point candidate = new(next.X, next.Y);
+                if (!listOfAllPointsOnAllBestWays.Contains(candidate))
+                    listOfAllPointsOnAllBestWays.Add(candidate);
+                next = next.previous;
+            }
+        }
+        Console.WriteLine($"result B: {listOfAllPointsOnAllBestWays.Count}");
     }
 }
