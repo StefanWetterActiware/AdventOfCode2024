@@ -364,3 +364,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /input
 .DS_Store
+/Properties/launchSettings.json
