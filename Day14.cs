@@ -28,7 +28,6 @@ class Day14 {
         Regex dayNoR = new(@"\d*$");
         var input = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value));
         
-        long sumA=0;
         long sumB=0;
 
         List<Robot> robots = new();

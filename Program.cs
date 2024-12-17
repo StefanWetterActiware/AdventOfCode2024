@@ -9,4 +9,4 @@ if (Environment.GetCommandLineArgs().Any() && Environment.GetCommandLineArgs().A
 }
 
 var doitM = lastDayT.GetMethod("doit", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-doitM.Invoke(null,null);
+doitM?.Invoke(null,null);

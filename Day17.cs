@@ -16,7 +16,6 @@ class Day17 {
           //                          Program: 0,1,5,4,3,0
           //                          """);
         
-        long sumA=0;
         long sumB=0;
 
         var registers = input.First();

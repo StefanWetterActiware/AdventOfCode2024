@@ -7,7 +7,6 @@ class Day11 {
         Regex dayNoR = new(@"\d*$");
         var input = Helper.getInput(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value));
         
-        long sumA=0;
         long sumB=0;
 
         List<long> intInput = input.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(x => long.Parse(x)).ToList();
