@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using Microsoft.VisualBasic;
+﻿using System.Text.RegularExpressions;
 
 class Day19 {
 

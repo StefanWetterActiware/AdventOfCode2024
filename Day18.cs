@@ -21,9 +21,6 @@ class Day18 {
         //         input = Helper.getBlocks("""
         //                                  """);
 
-        long sumA=0;
-        long sumB=0;
-
         char[][] grid = new char[71][];
         for (int i = 0; i < 71; i++) {
             grid[i] = new char[71];
