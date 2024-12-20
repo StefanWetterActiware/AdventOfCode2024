@@ -30,12 +30,38 @@ class Day13 {
                     }
                 }
             }
+            
+            //Part B, with mathematics
+            /*
+               Xr = k*Xa + j*Xb
+               Yr = k*Ya + j*Yb
+               Yr - j*Yb = k*Ya
+               (Yr - j*Yb)/Ya = k                  <==
+               Xr = ((Yr - j*Yb)/Ya)*Xa + j*Xb
+               Xr - j*Xb = ((Yr - j*Yb)/Ya)*Xa
+               (Xr - j*Xb)/Xa = (Yr - j*Yb)/Ya
+               Xa/(Xr - j*Xb) = Ya/(Yr - j*Yb)
+               Xa*(Yr - j*Yb) = Ya*(Xr - j*Xb)
+               Xa*Yr - j*Yb*Xa = Ya*Xr - j*Ya*Xb
+               Xa*Yr = Ya*Xr + j*Yb*Xa - j*Ya*Xb
+               Xa*Yr - Ya*Xr = j*Yb*Xa - j*Ya*Xb
+               Xa*Yr - Ya*Xr = j*(Yb*Xa - Ya*Xb)
+               (Xa*Yr - Ya*Xr)/(Yb*Xa - Ya*Xb) = b  <==
+             */
+            long Xr = 10000000000000 + prizeX;
+            long Yr = 10000000000000 + prizeY;
+            var j = (ax * Yr - ay * Xr) / (by * ax - ay * bx);
+            var k = (Yr - j * by) / ay;
+            
+            //Probe, ob es aufgeht
+            if ((Xr == k*ax + j*bx) && (Yr == k*ay + j*by))
+                sumB += k * 3 + j;
         }
         
-
 
         Console.ForegroundColor=ConsoleColor.Blue;
         Console.WriteLine($"result: {sumA}");
         Console.WriteLine($"result B: {sumB}");
+        //158125581557512 is too high
     }
 }
