@@ -54,8 +54,9 @@ class Day20 {
         }
 
         var shortest = calculatedRacePoints.Single(x => x.X == end.X && x.Y == end.Y).currentScore;
-        Console.WriteLine($"result: {shortest}");
+        Console.WriteLine($"shortest: {shortest}");
 
+        calculatedRacePoints.Sort((x, y) => x.currentScore.CompareTo(y.currentScore));
         for (int i = 0; i < calculatedRacePoints.Count; i++) {
             var pA = calculatedRacePoints[i];
             sumA += calculatedRacePoints.Skip(i+1).Count(x => Math.Abs(x.X - pA.X) + Math.Abs(x.Y-pA.Y) == 2 && Math.Abs(pA.currentScore-x.currentScore) > 101);
