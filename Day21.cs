@@ -143,21 +143,35 @@ class Day21 {
         var numKb = new KeyboardRobot(numericKb);
         var dirK1 = new KeyboardRobot(directionKb, numKb);
         var dirK2 = new KeyboardRobot(directionKb, dirK1);
+        var dirK3 = new KeyboardRobot(directionKb, dirK2);
+        var dirK4 = new KeyboardRobot(directionKb, dirK3);
+        var dirK5 = new KeyboardRobot(directionKb, dirK4);
+        var dirK6 = new KeyboardRobot(directionKb, dirK5);
+        var dirK7 = new KeyboardRobot(directionKb, dirK6);
+        var dirK8 = new KeyboardRobot(directionKb, dirK7);
+        var dirK9 = new KeyboardRobot(directionKb, dirK8);
+        var dirK10 = new KeyboardRobot(directionKb, dirK9);
 
         foreach (var line in input) {
-            Console.Write(line + ": ");
-            Console.WriteLine(numKb.whatIsNeededToPress(line));
+            //Console.Write(line + ": ");
+            //Console.WriteLine(numKb.whatIsNeededToPress(line));
 
+            var mustPress1 = dirK1.whatIsNeededToPress(line);
             var mustPress = dirK2.whatIsNeededToPress(line);
+            var mustPress3 = dirK3.whatIsNeededToPress(line);
+            var mustPress4 = dirK4.whatIsNeededToPress(line);
+            var mustPress5 = dirK5.whatIsNeededToPress(line);
+            var mustPress10 = dirK10.whatIsNeededToPress(line);
+
             var nos = Regex.Match(line, "[1-9]\\d*");
             var numericPart = int.Parse(nos.Value);
             var length = mustPress.Length;
-            Console.WriteLine($"{line}: Length: {length} (numeric Part: {numericPart})");
+            Console.WriteLine($"{line}: Length: {length} (numeric Part: {numericPart}), Length1: {mustPress1.Length},Length1: {mustPress.Length},Length1: {mustPress3.Length},Length4: {mustPress4.Length},Length5: {mustPress5.Length},Length10: {mustPress10.Length}");
             sumA += numericPart*length;
         }
         
         Console.ForegroundColor=ConsoleColor.Blue;
-        Console.WriteLine($"result: {sumA}");
+        Console.WriteLine($"result A: {sumA}");
         Console.WriteLine($"result B: {sumB}");
     }
 }
