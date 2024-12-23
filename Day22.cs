@@ -7,19 +7,38 @@ internal class Day22 {
         // input = """
         //         """.Split('\n');
 
-        long sumB=0;
+        SortedDictionary<int, Stack<int>> lastPrices = new();
+        SortedDictionary<string, List<int>> soldBananas = new();
 
         for (int i = 0; i < 2000; i++) {
             for (int j = 0; j < input.Count; j++) {
                 var x = ((input[j] * 64) ^ input[j]) % 16777216;
                 x = ((long)Math.Floor((double)x/32) ^ x) % 16777216;
                 x = ((x * 2048) ^ x) % 16777216;
+
+                if (i == 0) {
+                    lastPrices[j] = new Stack<int>(4);
+                } else {
+                    var lastPrice = int.Parse($"{input[j]}".Last().ToString());
+                    var curPrice = int.Parse($"{x}".Last().ToString());
+                    lastPrices[j].Push(curPrice-lastPrice);
+                }
+
+                if (i >= 4) {
+                    string seq = String.Join(",",lastPrices[j]);
+                    if (!soldBananas.ContainsKey(seq)) {
+                        soldBananas.Add(seq, new List<int>{j});
+                    } else if (!soldBananas[seq].Contains(j)) {
+                        soldBananas[seq].Add(j);
+                    }
+                }
+
                 input[j] = x;
             }
         }
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine($"result: {input.Sum()}");
-        Console.WriteLine($"result B: {sumB}");
+        Console.WriteLine($"result B: {soldBananas.Values.Select(x => x.Count).Max()}");
     }
 }
