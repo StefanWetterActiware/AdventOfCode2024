@@ -47,7 +47,6 @@ class Day21 {
 
         private string movesNeededTo(char c) {
             var cacheKey = $"{currentKey}{c}";
-            if (cacheKey == "37") return "<<^^";
             if (!fastestMovesCache.ContainsKey(cacheKey)) {
                 fastestMovesCache.Add($"{currentKey}{c}", movesNeededToDirect(c));
             }
@@ -61,53 +60,31 @@ class Day21 {
             if (destPos == currentPosition)
                 return "";
             
-            Queue<CalcPoint> toCalculate = new Queue<CalcPoint>();
-            List<CalcPoint> calculated = new();
-            toCalculate.Enqueue(new CalcPoint{X=currentPosition.X, Y=currentPosition.Y, currentCost = 0});
-
-            while (toCalculate.TryDequeue(out CalcPoint point)) {
-                if (!Helper.isOnGrid(keys, point.X, point.Y))
-                    continue;
-                if (keys[point.Y][point.X] == '#')
-                    continue;
-                
-                if (calculated.Any(x => x.X == point.X && x.Y == point.Y && x.currentCost <= point.currentCost))
-                    continue;
-                calculated.Add(point);
-                
-                if (point.X == destPos.X && point.Y == destPos.Y) continue;
-                
-                toCalculate.Enqueue(new CalcPoint {X = point.X + 1 , Y = point.Y, currentCost = point.currentCost + 1, previous = point});
-                toCalculate.Enqueue(new CalcPoint {X = point.X, Y = point.Y + 1, currentCost = point.currentCost + 1, previous = point});
-                toCalculate.Enqueue(new CalcPoint {X = point.X - 1 , Y = point.Y, currentCost = point.currentCost + 1, previous = point});
-                toCalculate.Enqueue(new CalcPoint {X = point.X, Y = point.Y - 1, currentCost = point.currentCost + 1, previous = point});
+            string vertical;
+            if (destPos.Y > currentPosition.Y) {
+                vertical = new string('v', destPos.Y - currentPosition.Y);
+            } else {
+                vertical = new string('^', currentPosition.Y - destPos.Y);
             }
 
-            var shortestDestPoint = calculated.Single(x => x.X == destPos.X && x.Y == destPos.Y);
-            string wayToDest = "";
-            var previous = shortestDestPoint;
-            var cur = shortestDestPoint.previous;
-            while (true) {
-                wayToDest = (previous.X -1 == cur.X ? ">" : previous.X +1 == cur.X ? "<" : previous.Y +1 == cur.Y ? "^" : "v") + wayToDest;
-                
-                if (cur.previous == null)
-                    break;
-                previous = cur;
-                cur=cur.previous;
-            }
-            
-            //Its all about the order: https://www.reddit.com/r/adventofcode/comments/1hja685/2024_day_21_here_are_some_examples_and_hints_for/
-            //TODO
-            var asArrayList = wayToDest.ToCharArray().ToList();
-            asArrayList.Sort();
-            asArrayList.Reverse();
-            wayToDest = String.Join("", asArrayList);
-            if (wayToDest.Contains(">")) {
-                var l = wayToDest.Length;
-                wayToDest = wayToDest.Replace(">", "").PadLeft(l, '>');
+            string horizontal;
+            if (destPos.X > currentPosition.X) {
+                horizontal = new string('>', destPos.X - currentPosition.X);
+            } else {
+                horizontal = new string('<', currentPosition.X - destPos.X);
             }
 
-            return wayToDest;
+            if (horizontal.Contains('<') && destPos.X == 0 && currentPosition.Y == getPos(keys, '#').Y) {
+                return vertical + horizontal;
+            } else if (horizontal.Contains('<')) {
+                return horizontal + vertical;
+            } else if (horizontal.Contains('>') && currentPosition.X == 0 && destPos.Y == getPos(keys, '#').Y) {
+                return horizontal + vertical;
+            } else if (horizontal.Contains('>')) {
+                return vertical + horizontal;
+            } else
+                return vertical + horizontal;
+
         }
 
         internal string whatIsNeededToPress(string s) {
@@ -150,13 +127,13 @@ class Day21 {
     internal static void doit(){
         Regex dayNoR = new(@"\d*$");
         var input = Helper.getInputAsLines(int.Parse(dayNoR.Match(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!.Name).Value));
-        input = """
-                029A
-                980A
-                179A
-                456A
-                379A
-                """.Split('\n');
+        //input = """
+        //        029A
+        //        980A
+        //        179A
+        //        456A
+        //        379A
+        //        """.Split('\n').Select(x => x.Trim('\r'));
         long sumA=0;
         long sumB=0;
         
@@ -167,24 +144,18 @@ class Day21 {
         var dirK1 = new KeyboardRobot(directionKb, numKb);
         var dirK2 = new KeyboardRobot(directionKb, dirK1);
 
-        //>^ -> >^A>^A>^A>^A>^A>^A>^A>^A>^A
-        //^> -> ^>A^>A^>A^>A^>A^>A^>A^>A^>A
-        
         foreach (var line in input) {
             Console.Write(line + ": ");
             Console.WriteLine(numKb.whatIsNeededToPress(line));
 
             var mustPress = dirK2.whatIsNeededToPress(line);
-            var nos = System.Text.RegularExpressions.Regex.Match(line, "[1-9]\\d*");
+            var nos = Regex.Match(line, "[1-9]\\d*");
             var numericPart = int.Parse(nos.Value);
             var length = mustPress.Length;
             Console.WriteLine($"{line}: Length: {length} (numeric Part: {numericPart})");
             sumA += numericPart*length;
         }
         
-        //Don't get it. 5th example is 4 too long...
-        //real result is too high as well: 223770
-
         Console.ForegroundColor=ConsoleColor.Blue;
         Console.WriteLine($"result: {sumA}");
         Console.WriteLine($"result B: {sumB}");
