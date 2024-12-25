@@ -57,54 +57,42 @@ class Day11 {
             return input2;
         };
 
-        for (int i = 0; i < 5; i++) {
-            List<long> newList = new List<long>();
-            foreach (long srcItem in intInput) {
-                newList.AddRange(getListAfter5(srcItem));
-            }
-            intInput = newList;
-        }
-        Console.WriteLine($"result: {intInput.Count}");
-        
-        var groupsAfter25 = intInput.GroupBy(x => x);
-        var after50 = groupsAfter25.ToDictionary(x => x.Key, x=>getListAfter25(x.Key));
+        var getGroupedAfter25 = (long input) => {
+            var r = getListAfter25(input);
+            return r.GroupBy(x=>x).ToDictionary(x => x.Key, y => (long)y.Count());
+        };
 
-        var somethingAfter50 = new SortedDictionary<long, long>();
-        foreach (var oneOfAfter50 in after50) {
-            foreach (var a in oneOfAfter50.Value.GroupBy(x => x)) {
-                var b = a.Count();
-                if (groupsAfter25.Any(g => g.Key == a.Key)) {
-                    b *= groupsAfter25.Single(g => g.Key == a.Key).Count();
+        var getListAfter25FromList = (List<long> input) => {
+            var res = new SortedDictionary<long, long>();
+            foreach (var i in intInput) {
+                var r = getListAfter25(i);
+                var grouped = r.GroupBy(x=>x).ToDictionary(x => x.Key, y => (long)y.Count());
+                foreach (var x in grouped) {
+                    if (!res.ContainsKey(x.Key)) res.Add(x.Key, 0);
+                    res[x.Key] += x.Value;
                 }
+            }
 
-                if (!somethingAfter50.ContainsKey(a.Key)) {
-                    somethingAfter50.Add(a.Key, 0);
-                }
-                somethingAfter50[a.Key] += b;
-            }
-        }
+            return res;
+        };
         
-        var after75 = somethingAfter50.ToDictionary(x => x.Key, x=>getListAfter25(x.Key));
-        var somethingAfter75 = new SortedDictionary<long, long>();
-        foreach (var oneOfAfter75 in after75) {
-            foreach (var a in oneOfAfter75.Value.GroupBy(x => x)) {
-                somethingAfter75.Add(a.Key, a.Count());
-                if (somethingAfter50.Any(g => g.Key == a.Key)) {
-                    somethingAfter75[a.Key] *= somethingAfter50[a.Key];
+        var zwischenergebnis = getListAfter25FromList(intInput);
+        Console.WriteLine($"result: {zwischenergebnis.Values.Sum()}");
+
+        for (int i = 0; i < 2; i++) {
+            var n = new SortedDictionary<long, long>();
+            foreach (var a in zwischenergebnis) {
+                foreach (var kvpzn in getGroupedAfter25(a.Key)) {
+                    if (!n.ContainsKey(kvpzn.Key)) n.Add(kvpzn.Key, 0);
+                    n[kvpzn.Key] += a.Value*kvpzn.Value;
                 }
             }
-        }
-        
-        // var inputAfter50 = 
-        //
-        // var groupsAfter50 = after50.GroupBy(x => x);
-        // var after75 = groupsAfter50.ToDictionary(x => x.Key, x=>getListAfter25(x.Key));
-        //
-        // Console.WriteLine($"resultAfter50: {after75.Count}");
+
+            zwischenergebnis = n;
+        }        
 
 
         Console.ForegroundColor=ConsoleColor.Blue;
-        Console.WriteLine($"result: {somethingAfter75.Values.Sum()}");
-        Console.WriteLine($"result B: {sumB}");
+        Console.WriteLine($"result B: {zwischenergebnis.Values.Sum()}");
     }
 }
